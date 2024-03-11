@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AiAssistant.Models.CheckCodeStyle;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AiAssistant.Controllers.CheckCodeStyle
 {
@@ -7,6 +8,13 @@ namespace AiAssistant.Controllers.CheckCodeStyle
         public IActionResult Index()
         {
             return View();
+        }
+
+        public CheckCodeStyleResponse generateCodeStyle (CheckCodeStyleRequest request)
+        {
+
+
+            return new CheckCodeStyleResponse();
         }
     }
 }
