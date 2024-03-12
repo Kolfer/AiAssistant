@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace AiAssistant.Clients.OpenAIClient.Models
+namespace AiAssistant.Shared.Clients.OpenAIClient.Models
 {
     public class Usage
     {
