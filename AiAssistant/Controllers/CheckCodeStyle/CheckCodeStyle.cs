@@ -10,7 +10,9 @@ namespace AiAssistant.Controllers.CheckCodeStyle
             return View();
         }
 
-        public CheckCodeStyleResponse generateCodeStyle (CheckCodeStyleRequest request)
+        [Route("CheckCodeStyle")]
+        [HttpGet]
+        public CheckCodeStyleResponse GenerateCodeStyle(CheckCodeStyleRequest request)
         {
 
 
