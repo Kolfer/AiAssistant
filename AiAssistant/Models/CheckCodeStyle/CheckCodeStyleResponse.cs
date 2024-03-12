@@ -1,7 +1,7 @@
 ﻿namespace AiAssistant.Models.CheckCodeStyle
 {
-    public class CheckCodeStyleResponse
+    public class CheckCodeStyleResponse(string response)
     {
-        public string Response { get; set; }
+        public string Response { get; set; } = response;
     }
 }
