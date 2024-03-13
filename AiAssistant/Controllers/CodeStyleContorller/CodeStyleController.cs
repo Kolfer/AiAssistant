@@ -11,13 +11,12 @@ namespace AiAssistant.Controllers.CodeStyleController
     {
         public readonly OpenAIClient _openAIClient = new(configuration["AppSettings:ApiKey"]);
 
-        
         [HttpGet("FixStyle")]
-        public async Task<FixStyleResponse> FixStyleAsync(FixStyleRequest request)
+        public async Task<ActionResult<FixStyleResponse>> FixStyleAsync(FixStyleRequest request)
         {
-            if (string.IsNullOrEmpty(request.Code))
+            if (string.IsNullOrWhiteSpace(request.Code))
             {
-                return new FixStyleResponse("Code is not provided");
+                return BadRequest("Code is not provided");
             }
 
             var openAiRequest = new CreateChatCompletionRequest()
@@ -46,15 +45,17 @@ namespace AiAssistant.Controllers.CodeStyleController
                 switch (choice.FinishReason)
                 {
                     case FinishReason.Stop:
-                        return new FixStyleResponse(choice.Message.Content ?? "Assistant returned empty message");
+                        return choice.Message.Content != null
+                            ? Ok( new FixStyleResponse (choice.Message.Content))
+                            : BadRequest ("Assistant returned empty message");
                     case FinishReason.Length:
-                        return new FixStyleResponse("Request size is reached");
+                        return BadRequest ("Request size is reached");
                     case FinishReason.ContentFilter:
-                        return new FixStyleResponse("Request was filtered by ContentFilters");
+                        return BadRequest ("Request was filtered by ContentFilters");
                 }
             }
             
-            return new FixStyleResponse("Something went wrong");
+            return BadRequest ("Something went wrong");
         }
     }
 }
