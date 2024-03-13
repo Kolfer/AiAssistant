@@ -6,13 +6,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AiAssistant.Controllers.CodeStyleController
 {
+    [Route("api/v1/[controller]")]
     public class CodeStyleController(IConfiguration configuration) : Controller
     {
         public readonly OpenAIClient _openAIClient = new(configuration["AppSettings:ApiKey"]);
 
-        [Route("CheckCodeStyle")]
-        [HttpGet]
         
+        [HttpGet("FixStyle")]
         public async Task<FixStyleResponse> FixStyleAsync(FixStyleRequest request)
         {
             if (string.IsNullOrEmpty(request.Code))
