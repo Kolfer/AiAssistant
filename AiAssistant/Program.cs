@@ -17,6 +17,6 @@ app.UseRouting();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=CheckCodeStyle}/{action=Index}/{id?}");
+    pattern: "{controller=CodeStyleController}/{action=Index}/{id?}");
 
 app.Run();

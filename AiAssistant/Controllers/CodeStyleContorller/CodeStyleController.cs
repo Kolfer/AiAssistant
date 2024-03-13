@@ -1,22 +1,23 @@
-﻿using AiAssistant.Models.CheckCodeStyle;
+﻿using AiAssistant.Models.CodeStyle;
 using AiAssistant.Shared.Clients.OpenAIClient;
 using AiAssistant.Shared.Clients.OpenAIClient.Models;
 using AiAssistant.Shared.Constants;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AiAssistant.Controllers.CheckCodeStyleController
+namespace AiAssistant.Controllers.CodeStyleController
 {
-    public class CheckCodeStyleController(IConfiguration configuration) : Controller
+    public class CodeStyleController(IConfiguration configuration) : Controller
     {
         public readonly OpenAIClient _openAIClient = new(configuration["AppSettings:ApiKey"]);
 
         [Route("CheckCodeStyle")]
         [HttpGet]
-        public async Task<CheckCodeStyleResponse> GenerateCodeStyleAsync(CheckCodeStyleRequest request)
+        
+        public async Task<FixStyleResponse> FixStyleAsync(FixStyleRequest request)
         {
             if (string.IsNullOrEmpty(request.Code))
             {
-                return new CheckCodeStyleResponse("Code is not provided");
+                return new FixStyleResponse("Code is not provided");
             }
 
             var openAiRequest = new CreateChatCompletionRequest()
@@ -27,7 +28,7 @@ namespace AiAssistant.Controllers.CheckCodeStyleController
                     new Message
                     {
                         Role = Role.System,
-                        Content = Prompts.CheckCodeStyle
+                        Content = Prompts.FixStyle
                     },
                     new Message
                     {
@@ -45,15 +46,15 @@ namespace AiAssistant.Controllers.CheckCodeStyleController
                 switch (choice.FinishReason)
                 {
                     case FinishReason.Stop:
-                        return new CheckCodeStyleResponse(choice.Message.Content ?? "Assistant returned empty message");
+                        return new FixStyleResponse(choice.Message.Content ?? "Assistant returned empty message");
                     case FinishReason.Length:
-                        return new CheckCodeStyleResponse("Request size is reached");
+                        return new FixStyleResponse("Request size is reached");
                     case FinishReason.ContentFilter:
-                        return new CheckCodeStyleResponse("Request was filtered by ContentFilters");
+                        return new FixStyleResponse("Request was filtered by ContentFilters");
                 }
             }
             
-            return new CheckCodeStyleResponse("Something went wrong");
+            return new FixStyleResponse("Something went wrong");
         }
     }
 }
