@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AiAssistant.Controllers.CheckCodeStyleController
 {
-    public class CheckCodeStyleController(string apiKey) : Controller
+    public class CheckCodeStyleController(IConfiguration configuration) : Controller
     {
-        public readonly OpenAIClient _openAIClient = new(apiKey);
+        public readonly OpenAIClient _openAIClient = new(configuration["AppSettings:ApiKey"]);
 
         [Route("CheckCodeStyle")]
         [HttpGet]
@@ -21,6 +21,7 @@ namespace AiAssistant.Controllers.CheckCodeStyleController
 
             var openAiRequest = new CreateChatCompletionRequest()
             {
+                Model = configuration["AppSettings:Model"],
                 Messages =
                 [
                     new Message
