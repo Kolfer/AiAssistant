@@ -4,7 +4,7 @@ using AiAssistant.Shared.Clients.OpenAIClient.Models;
 using AiAssistant.Shared.Constants;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AiAssistant.Controllers.CodeStyleController
+namespace AiAssistant.Controllers.CodeStyle
 {
     [Route("api/v1/[controller]")]
     public class CodeStyleController(IConfiguration configuration) : Controller
@@ -12,6 +12,7 @@ namespace AiAssistant.Controllers.CodeStyleController
         public readonly OpenAIClient _openAIClient = new(configuration["AppSettings:ApiKey"]);
 
         [HttpGet("FixStyle")]
+        [Produces("text/plain")]
         public async Task<ActionResult<FixStyleResponse>> FixStyleAsync(FixStyleRequest request)
         {
             if (string.IsNullOrWhiteSpace(request.Code))
@@ -46,7 +47,7 @@ namespace AiAssistant.Controllers.CodeStyleController
                 {
                     case FinishReason.Stop:
                         return choice.Message.Content != null
-                            ? Ok( new FixStyleResponse (choice.Message.Content))
+                            ? Content(choice.Message.Content)
                             : BadRequest ("Assistant returned empty message");
                     case FinishReason.Length:
                         return BadRequest ("Request size is reached");
