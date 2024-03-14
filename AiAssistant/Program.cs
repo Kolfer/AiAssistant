@@ -19,4 +19,8 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=CodeStyle}/{action=Index}/{id?}");
 
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=UnitTests}/{action=Index}/{id?}");
+
 app.Run();
