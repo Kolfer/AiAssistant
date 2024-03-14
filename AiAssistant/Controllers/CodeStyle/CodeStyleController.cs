@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace AiAssistant.Controllers.CodeStyle
 {
     [Route("api/v1/[controller]")]
-    public class CodeStyleController(IConfiguration configuration) : Controller
+    public class CodeStyleController(IConfiguration configuration) : ControllerBase
     {
         public readonly OpenAIClient _openAIClient = new(configuration["AppSettings:ApiKey"]);
 
@@ -20,23 +20,10 @@ namespace AiAssistant.Controllers.CodeStyle
                 return BadRequest("Code is not provided");
             }
 
-            var openAiRequest = new CreateChatCompletionRequest()
-            {
-                Model = configuration["AppSettings:Model"],
-                Messages =
-                [
-                    new Message
-                    {
-                        Role = Role.System,
-                        Content = Prompts.FixStyle
-                    },
-                    new Message
-                    {
-                        Role = Role.User,
-                        Content = request.Code
-                    }
-                ]
-            };
+            var openAiRequest = new CreateChatCompletionRequest(
+                configuration["AppSettings:Model"],
+                Prompts.FixStyle,
+                request.Code);
 
             var response = await _openAIClient.CreateChatCompletion(openAiRequest);
             var choice = response?.Choices?.FirstOrDefault();
