@@ -11,6 +11,11 @@ namespace AiAssistant.Controllers.CodeStyle
     {
         private readonly OpenAIClient _openAIClient = new(configuration["AppSettings:ApiKey"]);
 
+        /// <summary>
+        /// Fixing style of a provided code snippet according to Code Conventions
+        /// </summary>
+        /// <param name="request">Request with a code snippet</param>
+        /// <returns>Formatted code snippet</returns>
         [HttpGet("FixStyle")]
         [Produces("text/plain")]
         public async Task<ActionResult<FixStyleResponse>> FixStyleAsync(FixStyleRequest request)

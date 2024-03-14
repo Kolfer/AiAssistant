@@ -12,6 +12,11 @@ namespace AiAssistant.Controllers.UnitTests
     {
         private readonly OpenAIClient _openAIClient = new(configuration["AppSettings:ApiKey"]);
 
+        /// <summary>
+        /// Generating unit tests for the provided code snippet
+        /// </summary>
+        /// <param name="request">Request with a code snippet</param>
+        /// <returns>Code snipped with generated unit tests</returns>
         [HttpGet("Generate")]
         [Produces("text/plain")]
         public async Task<ActionResult<GenerateResponse>> GenerateAsync(GenerateRequest request)
