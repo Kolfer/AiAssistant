@@ -10,7 +10,7 @@ namespace AiAssistant.Controllers.UnitTests
     [Route("api/v1/[controller]")]
     public class UnitTestsController(IConfiguration configuration) : ControllerBase
     {
-        public readonly OpenAIClient _openAIClient = new(configuration["AppSettings:ApiKey"]);
+        private readonly OpenAIClient _openAIClient = new(configuration["AppSettings:ApiKey"]);
 
         [HttpGet("Generate")]
         [Produces("text/plain")]

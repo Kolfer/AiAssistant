@@ -9,7 +9,7 @@ namespace AiAssistant.Controllers.CodeStyle
     [Route("api/v1/[controller]")]
     public class CodeStyleController(IConfiguration configuration) : ControllerBase
     {
-        public readonly OpenAIClient _openAIClient = new(configuration["AppSettings:ApiKey"]);
+        private readonly OpenAIClient _openAIClient = new(configuration["AppSettings:ApiKey"]);
 
         [HttpGet("FixStyle")]
         [Produces("text/plain")]
