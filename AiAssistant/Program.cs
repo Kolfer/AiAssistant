@@ -1,3 +1,4 @@
+using AiAssistant.Shared.Clients.OpenAIClient;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 
@@ -8,6 +9,10 @@ builder.Services.AddSwaggerGen(c =>
     c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory,
         $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
 });
+
+builder.Services.AddHttpClient();
+builder.Services.AddTransient<OpenAIClient>();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

@@ -8,9 +8,9 @@ using AiAssistant.Models.UnitTests;
 namespace AiAssistant.Controllers.UnitTests
 {
     [Route("api/v1/[controller]")]
-    public class UnitTestsController(IConfiguration configuration) : ControllerBase
+    public class UnitTestsController(OpenAIClient openAIClient, IConfiguration configuration) : ControllerBase
     {
-        private readonly OpenAIClient _openAIClient = new(configuration["AppSettings:ApiKey"]);
+        private readonly OpenAIClient _openAIClient = openAIClient;
 
         /// <summary>
         /// Generating unit tests for the provided code snippet

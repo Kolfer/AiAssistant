@@ -10,6 +10,7 @@ namespace AiAssistant.Controllers.CodeStyle
     public class CodeStyleController(IConfiguration configuration) : ControllerBase
     {
         private readonly OpenAIClient _openAIClient = new(configuration["AppSettings:ApiKey"]);
+        private readonly OpenAIClient _openAIClient = openAIClient;
 
         /// <summary>
         /// Fixing style of a provided code snippet according to Code Conventions
