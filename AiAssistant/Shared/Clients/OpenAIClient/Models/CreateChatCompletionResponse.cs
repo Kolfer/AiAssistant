@@ -17,7 +17,7 @@ namespace AiAssistant.Shared.Clients.OpenAIClient.Models
         public string Model { get; set; }
 
         [JsonProperty("system_fingerprint")]
-        public string System_Fingerprint { get; set; }
+        public string SystemFingerprint { get; set; }
 
         [JsonProperty("choices")]
         public List<Choice> Choices { get; set; }
