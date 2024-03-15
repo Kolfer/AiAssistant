@@ -7,9 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace AiAssistant.Controllers.CodeStyle
 {
     [Route("api/v1/[controller]")]
-    public class CodeStyleController(IConfiguration configuration) : ControllerBase
+    public class CodeStyleController(OpenAIClient openAIClient, IConfiguration configuration) : ControllerBase
     {
-        private readonly OpenAIClient _openAIClient = new(configuration["AppSettings:ApiKey"]);
         private readonly OpenAIClient _openAIClient = openAIClient;
 
         /// <summary>
@@ -17,7 +16,7 @@ namespace AiAssistant.Controllers.CodeStyle
         /// </summary>
         /// <param name="request">Request with a code snippet</param>
         /// <returns>Formatted code snippet</returns>
-        [HttpGet("FixStyle")]
+        [HttpPost("FixStyle")]
         [Produces("text/plain")]
         public async Task<ActionResult<FixStyleResponse>> FixStyleAsync(FixStyleRequest request)
         {
@@ -30,26 +29,25 @@ namespace AiAssistant.Controllers.CodeStyle
                 configuration["AppSettings:Model"],
                 Prompts.FixStyle,
                 request.Code);
-
-            var response = await _openAIClient.CreateChatCompletion(openAiRequest);
-            var choice = response?.Choices?.FirstOrDefault();
-
-            if (choice != null)
+            try
             {
-                switch (choice.FinishReason)
+                var response = await _openAIClient.CreateChatCompletion(openAiRequest);
+
+                var choice = response?.Choices?.FirstOrDefault();
+
+                return choice?.FinishReason switch
                 {
-                    case FinishReason.Stop:
-                        return choice.Message.Content != null
-                            ? Content(choice.Message.Content)
-                            : BadRequest ("Assistant returned empty message");
-                    case FinishReason.Length:
-                        return BadRequest ("Request size is reached");
-                    case FinishReason.ContentFilter:
-                        return BadRequest ("Request was filtered by ContentFilters");
-                }
+                    FinishReason.Stop when choice.Message != null => Content(choice.Message.Content),
+                    FinishReason.Stop when choice.Message == null => BadRequest("Assistant returned empty message"),
+                    FinishReason.Length => BadRequest("Request size is reached"),
+                    FinishReason.ContentFilter => BadRequest("Request was filtered by ContentFilters"),
+                    _ => BadRequest("Something went wrong")
+                };
             }
-            
-            return BadRequest ("Something went wrong");
+            catch (Exception ex)
+            {
+                return StatusCode(502);
+            }
         }
     }
 }

@@ -17,7 +17,7 @@ namespace AiAssistant.Controllers.UnitTests
         /// </summary>
         /// <param name="request">Request with a code snippet</param>
         /// <returns>Code snipped with generated unit tests</returns>
-        [HttpGet("Generate")]
+        [HttpPost("Generate")]
         [Produces("text/plain")]
         public async Task<ActionResult<GenerateResponse>> GenerateAsync(GenerateRequest request)
         {
@@ -31,25 +31,25 @@ namespace AiAssistant.Controllers.UnitTests
                 Prompts.GenerateUnitTests,
                 request.Code);
 
-            var response = await _openAIClient.CreateChatCompletion(openAiRequest);
-            var choice = response?.Choices?.FirstOrDefault();
-
-            if (choice != null)
+            try
             {
-                switch (choice.FinishReason)
-                {
-                    case FinishReason.Stop:
-                        return choice.Message.Content != null
-                            ? Content(choice.Message.Content)
-                            : BadRequest("Assistant returned empty message");
-                    case FinishReason.Length:
-                        return BadRequest("Request size is reached");
-                    case FinishReason.ContentFilter:
-                        return BadRequest("Request was filtered by ContentFilters");
-                }
-            }
+                var response = await _openAIClient.CreateChatCompletion(openAiRequest);
 
-            return BadRequest("Something went wrong");
+                var choice = response?.Choices?.FirstOrDefault();
+
+                return choice?.FinishReason switch
+                {
+                    FinishReason.Stop when choice.Message != null => Content(choice.Message.Content),
+                    FinishReason.Stop when choice.Message == null => BadRequest("Assistant returned empty message"),
+                    FinishReason.Length => BadRequest("Request size is reached"),
+                    FinishReason.ContentFilter => BadRequest("Request was filtered by ContentFilters"),
+                    _ => BadRequest("Something went wrong")
+                };
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
         }
     }
 }

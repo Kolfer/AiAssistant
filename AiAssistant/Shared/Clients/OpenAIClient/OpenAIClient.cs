@@ -16,7 +16,7 @@ namespace AiAssistant.Shared.Clients.OpenAIClient
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_apiKey}");
         }
 
-        public async Task<CreateChatCompletionResponse> CreateChatCompletion(CreateChatCompletionRequest request)
+        public async Task<CreateChatCompletionResponse?> CreateChatCompletion(CreateChatCompletionRequest request)
         {
             var requestContent = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
             var response = await _httpClient.PostAsync("https://api.openai.com/v1/chat/completions", requestContent);
