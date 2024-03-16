@@ -9,7 +9,7 @@ namespace AiAssistant.Controllers.CodeStyle
     [Route("api/v1/[controller]")]
     public class CodeStyleController(OpenAIClient openAIClient, IConfiguration configuration) : ControllerBase
     {
-        private readonly OpenAIClient _openAIClient = openAIClient ?? throw new ArgumentNullException(nameof(openAIClient), "Issue with injecting OpenAIClient");;
+        private readonly OpenAIClient _openAIClient = openAIClient ?? throw new ArgumentNullException(nameof(openAIClient), "Issue with injecting OpenAIClient");
 
         /// <summary>
         /// Fixing style of a provided code snippet according to Code Conventions

@@ -39,21 +39,21 @@ namespace AiAssistant.Controllers.UnitTests
 
                 return choice?.FinishReason switch
                 {
-                    FinishReason.Stop when choice.Message != null && choice.Message.Content != null 
+                    FinishReason.Stop when choice.Message != null && choice.Message.Content != null
                     => Content(choice.Message.Content),
 
-                    FinishReason.Stop when choice.Message == null || choice.Message.Content == null 
-                    => BadRequest("Assistant returned empty message"),
+                    FinishReason.Stop when choice.Message == null || choice.Message.Content == null
+                    => StatusCode(502, "Assistant returned empty message"),
 
                     FinishReason.Length => BadRequest("Request size is reached"),
 
                     FinishReason.ContentFilter => BadRequest("Request was filtered by ContentFilters"),
-                    _ => BadRequest("Something went wrong")
+                    _ => StatusCode(502, "Something went wrong")
                 };
             }
             catch (Exception ex)
             {
-                return BadRequest();
+                return StatusCode(502, ex.Message);
             }
         }
     }
