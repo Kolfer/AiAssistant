@@ -12,7 +12,7 @@ namespace AiAssistant.Shared.Clients.OpenAIClient
         public OpenAIClient(HttpClient httpClient, IConfiguration configuration)
         {
             _httpClient = httpClient;
-            _apiKey = configuration["AppSettings:ApiKey"];
+            _apiKey = configuration["AppSettings:ApiKey"] ?? throw new ArgumentNullException(nameof(configuration), "ApiKey is not configured");
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_apiKey}");
         }
 

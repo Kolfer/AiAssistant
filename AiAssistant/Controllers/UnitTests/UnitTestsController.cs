@@ -10,7 +10,7 @@ namespace AiAssistant.Controllers.UnitTests
     [Route("api/v1/[controller]")]
     public class UnitTestsController(OpenAIClient openAIClient, IConfiguration configuration) : ControllerBase
     {
-        private readonly OpenAIClient _openAIClient = openAIClient;
+        private readonly OpenAIClient _openAIClient = openAIClient  ?? throw new ArgumentNullException(nameof(openAIClient), "Issue with injecting OpenAIClient");
 
         /// <summary>
         /// Generating unit tests for the provided code snippet
@@ -27,7 +27,7 @@ namespace AiAssistant.Controllers.UnitTests
             }
 
             var openAiRequest = new CreateChatCompletionRequest(
-                configuration["AppSettings:Model"],
+                configuration["AppSettings:Model"] ?? throw new ArgumentNullException(nameof(configuration), "Model is not configured"),
                 Prompts.GenerateUnitTests,
                 request.Code);
 
@@ -39,9 +39,14 @@ namespace AiAssistant.Controllers.UnitTests
 
                 return choice?.FinishReason switch
                 {
-                    FinishReason.Stop when choice.Message != null => Content(choice.Message.Content),
-                    FinishReason.Stop when choice.Message == null => BadRequest("Assistant returned empty message"),
+                    FinishReason.Stop when choice.Message != null && choice.Message.Content != null 
+                    => Content(choice.Message.Content),
+
+                    FinishReason.Stop when choice.Message == null || choice.Message.Content == null 
+                    => BadRequest("Assistant returned empty message"),
+
                     FinishReason.Length => BadRequest("Request size is reached"),
+
                     FinishReason.ContentFilter => BadRequest("Request was filtered by ContentFilters"),
                     _ => BadRequest("Something went wrong")
                 };
@@ -53,4 +58,3 @@ namespace AiAssistant.Controllers.UnitTests
         }
     }
 }
-

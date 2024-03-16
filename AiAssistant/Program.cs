@@ -1,5 +1,4 @@
 using AiAssistant.Shared.Clients.OpenAIClient;
-using Microsoft.OpenApi.Models;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
